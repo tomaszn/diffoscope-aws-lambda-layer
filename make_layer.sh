@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# TODO add zipnote to bin/ (zip package)
 # TODO add libarchive-tools
 # jsondiff: would crash on Chrome extensions (manifest.json is not a valid JSON)
 
@@ -16,11 +15,13 @@ docker run --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \
       cd ${PKG_DIR} && \
       yum --assumeyes install vim-common && \
       cp --verbose /usr/bin/xxd bin/ && \
+      cp --verbose /usr/bin/zipnote bin/ && \
       yum --assumeyes install libarchive && \
       cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so && \
       cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so.13 && \
       cp --verbose /usr/lib64/liblzo2.so.2 lib/ && \
-      cp --verbose /usr/lib64/libmagic.so.1 lib/ && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/lib64/libmagic.so.1 lib/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/lib64/libcrypto.so.10 lib/) && \
       chown --verbose $(id --user):$(id --group) lib/* \
     "
 docker run --user $(id --user):$(id --group) --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \

@@ -49,6 +49,8 @@ jobs:
           mkdir opt
           cd opt
           unzip ../layer_diffoscope_${{ matrix.runtime }}.zip
+          ldd bin/* || true
+          ldd lib/* || true
           cd ..
           ls -l
           docker run -e DOCKER_LAMBDA_DEBUG=1 --rm -v "$PWD":/var/task:ro,delegated -v "$PWD"/opt/:/opt:ro,delegated lambci/lambda:${{ matrix.runtime }} tests.run 2> /tmp/test_results
