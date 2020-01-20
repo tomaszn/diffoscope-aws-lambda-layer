@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# TODO
-# add zipnote to bin/ (zip package)
-# add libarchive-tools
+# TODO add zipnote to bin/ (zip package)
+# TODO add libarchive-tools
+# jsondiff: would crash on Chrome extensions (manifest.json is not a valid JSON)
 
 RUNTIME=${1:-python3.6}
 PKG_DIR=$(mktemp -d ./d.XXXXXX)
@@ -13,16 +13,18 @@ rm $TARGET
 
 docker run --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \
     sh -c " \
+      cd ${PKG_DIR} && \
       yum --assumeyes install vim-common && \
-      cp /usr/bin/xxd ${PKG_DIR}/bin && \
+      cp --verbose /usr/bin/xxd bin/ && \
       yum --assumeyes install libarchive && \
-      cp --verbose /usr/lib64/libarchive.so.13 ${PKG_DIR}/lib/libarchive.so && \
-      cp --verbose /usr/lib64/liblzo2.so.2 ${PKG_DIR}/lib/ && \
-      chown --verbose $(id --user):$(id --group) ${PKG_DIR}/lib/* \
+      cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so && \
+      cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so.13 && \
+      cp --verbose /usr/lib64/liblzo2.so.2 lib/ && \
+      chown --verbose $(id --user):$(id --group) lib/* \
     "
 docker run --user $(id --user):$(id --group) --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \
     sh -c " \
-      pip install diffoscope jsbeautifier jsondiff -t ${PKG_DIR}/python --no-cache-dir && \
+      pip install diffoscope jsbeautifier -t ${PKG_DIR}/python --no-cache-dir && \
       cp --verbose ${PKG_DIR}/python/bin/* ${PKG_DIR}/bin/ \
     "
 
