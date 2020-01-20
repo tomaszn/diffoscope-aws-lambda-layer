@@ -8,8 +8,10 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Check out code
+        if: startsWith(github.ref, 'v')
         uses: actions/checkout@v1
       - name: create release
+        if: startsWith(github.ref, 'v')
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -20,8 +22,10 @@ jobs:
           draft: false
           prerelease: false
       - name: Output Release URL File
+        if: startsWith(github.ref, 'v')
         run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
       - name: Save Release URL File for publish
+        if: startsWith(github.ref, 'v')
         uses: actions/upload-artifact@v1
         with:
           name: release_url
@@ -30,6 +34,7 @@ jobs:
   build_and_release:
     needs: [create_release]
     strategy:
+      fail-fast: false
       matrix:
         runtime:
           - python3.6
@@ -39,16 +44,30 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - run: ./make_layer.sh ${{ matrix.runtime }}
+
+      - run: |
+          mkdir opt
+          cd opt
+          unzip ../layer_diffoscope_${{ matrix.runtime }}.zip
+          cd ..
+          ls -l
+          docker run -e DOCKER_LAMBDA_DEBUG=1 --rm -v "$PWD":/var/task:ro,delegated -v "$PWD"/opt/:/opt:ro,delegated lambci/lambda:${{ matrix.runtime }} tests.run 2> /tmp/test_results
+          cat /tmp/test_results
+          grep '^OK$' /tmp/test_results
+
       - name: Load Release URL File from release job
+        if: startsWith(github.ref, 'v')
         uses: actions/download-artifact@v1
         with:
           name: release_url
       - name: Get Release File Name & Upload URL
+        if: startsWith(github.ref, 'v')
         id: get_release_info
         run: |
           value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$value
       - name: Upload Release Asset
+        if: startsWith(github.ref, 'v')
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1.0.1
         env:
