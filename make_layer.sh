@@ -20,6 +20,7 @@ docker run --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \
       cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so && \
       cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so.13 && \
       cp --verbose /usr/lib64/liblzo2.so.2 lib/ && \
+      cp --verbose /usr/lib64/libmagic.so.1 lib/ && \
       chown --verbose $(id --user):$(id --group) lib/* \
     "
 docker run --user $(id --user):$(id --group) --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \
