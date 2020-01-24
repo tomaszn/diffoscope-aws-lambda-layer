@@ -1,18 +1,22 @@
 # diffoscope-aws-lambda-layer
 
-A script that prepares an AWS Lambda layer with diffoscope and some tools it needs.
+AWS Lambda layers with diffoscope and some tools it needs.
 
-## How to build
+## How to make the layer
 
-```bash
+Either take a .zip package generated for the [current release](../../releases/latest) or build it yourself, e.g.
+```shell
 ./make_layer.sh python3.6
+```
+and upload with
+```shell
 ./upload_layer.sh python3.6 # requires properly configured "aws" command
 ```
 
 ## How to use in Lambda
 
 First, you need to set two environment variables:
-```bash
+```shell
 MAGIC=/usr/share/misc/magic:/opt/magic
 LD_PRELOAD=/opt/lib/libarchive.so
 ```
@@ -38,3 +42,4 @@ def handler(event, context):
         run_diffoscope(parsed_args)
     # serve output_file as text/html
 ```
+
