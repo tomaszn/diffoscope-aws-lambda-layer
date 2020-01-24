@@ -11,6 +11,13 @@ A script that prepares an AWS Lambda layer with diffoscope and some tools it nee
 
 ## How to use in Lambda
 
+First, you need to set two environment variables:
+```bash
+MAGIC=/usr/share/misc/magic:/opt/magic
+LD_PRELOAD=/opt/lib/libarchive.so
+```
+
+Second, use this snippet to run diffoscope:
 ```python
 from diffoscope.logging import line_eraser, setup_logging
 from diffoscope.main import create_parser, run_diffoscope

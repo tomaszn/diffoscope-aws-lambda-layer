@@ -18,10 +18,13 @@ docker run --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \
       cp --verbose /usr/bin/zipnote bin/ && \
       yum --assumeyes install libarchive && \
       cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so && \
-      cp --verbose /usr/lib64/libarchive.so.13 lib/libarchive.so.13 && \
       cp --verbose /usr/lib64/liblzo2.so.2 lib/ && \
-      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/lib64/libmagic.so.1 lib/) && \
-      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/lib64/libcrypto.so.10 lib/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/bin/cmp bin/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/bin/diff bin/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/bin/file bin/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/bin/zipinfo bin/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && cp --verbose /usr/lib64/libxml2.so.2 lib/) && \
+      ([[ $RUNTIME == 'python3.8' ]] && curl 'https://kojipkgs.fedoraproject.org//packages/file/5.36/5.fc30/x86_64/file-libs-5.36-5.fc30.x86_64.rpm' --output - | rpm2cpio | cpio -idv && cp --verbose usr/share/misc/magic . && cp usr/lib64/libmagic.so.1 lib/) && \
       chown --verbose $(id --user):$(id --group) lib/* \
     "
 docker run --user $(id --user):$(id --group) --rm -v $(pwd):/foo -w /foo lambci/lambda:build-$RUNTIME \

@@ -19,6 +19,7 @@ class ChromeExtensionTestCase(unittest.TestCase):
                 "test/extension_2020_1_13_0.crx",
                 "--text",
                 report_file,
+                "--debug",
             ]
         )
         with open(report_file) as f:
