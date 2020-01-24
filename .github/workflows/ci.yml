@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: Check out code
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/checkout@v1
       - name: create release
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -22,10 +22,10 @@ jobs:
           draft: false
           prerelease: false
       - name: Output Release URL File
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
       - name: Save Release URL File for publish
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v1
         with:
           name: release_url
@@ -46,18 +46,18 @@ jobs:
       - run: ./make_layer.sh ${{ matrix.runtime }}
       - run: ./run_tests.sh ${{ matrix.runtime }}
       - name: Load Release URL File from release job
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/download-artifact@v1
         with:
           name: release_url
       - name: Get Release File Name & Upload URL
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         id: get_release_info
         run: |
           value=`cat release_url/release_url.txt`
           echo ::set-output name=upload_url::$value
       - name: Upload Release Asset
-        if: startsWith(github.ref, 'v')
+        if: startsWith(github.ref, 'refs/tags/v')
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1.0.1
         env:
